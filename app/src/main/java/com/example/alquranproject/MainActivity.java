@@ -1,12 +1,14 @@
 package com.example.alquranproject;
 
+import android.os.Bundle;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Bundle;
-import android.util.Log;
-
+import com.example.alquranproject.Models.AudioModel.Audio;
+import com.example.alquranproject.Models.AudioModel.AudioFilesItem;
 import com.example.alquranproject.Models.SurahModel.Chapters;
 import com.example.alquranproject.Models.SurahModel.ChaptersItem;
 import com.example.alquranproject.retrofit.ApiService;
@@ -21,11 +23,20 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
 
-    private RecyclerView recyclerView;
-
     private MainAdapter mainAdapter;
+    private AudioAdapter audioAdapter;
 
-    private List<ChaptersItem> results = new ArrayList<>();
+    private List<ChaptersItem> surah = new ArrayList<>();
+
+    private List<AudioFilesItem> audio = new ArrayList<>();
+
+
+    private RecyclerView recyclerView, recyclerView_1;
+
+    private RecyclerView.LayoutManager layoutManager1, layoutManager2;
+
+
+
 
 
     @Override
@@ -35,27 +46,49 @@ public class MainActivity extends AppCompatActivity {
         setUpView();
         setUpRecyclerView();
         getDataFromApi();
+        getDataFromApiAudio();
 
     }
+
 
     private void setUpRecyclerView() {
-        mainAdapter = new MainAdapter(results);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+//        For Surah
+        mainAdapter = new MainAdapter(surah);
+        layoutManager1 = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager1);
         recyclerView.setAdapter(mainAdapter);
+//        For Audio
+        audioAdapter = new AudioAdapter(audio);
+        layoutManager2 = new LinearLayoutManager(this);
+        recyclerView_1.setLayoutManager(layoutManager2);
+        recyclerView_1.setAdapter(audioAdapter);
     }
-
     private void setUpView() {
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.rvSurah);
+        recyclerView_1 = findViewById(R.id.rvAudio);
     }
 
+    private void getDataFromApiAudio() {
+        ApiService.endpoint().getAudio().enqueue(new Callback<Audio>() {
+            @Override
+            public void onResponse(Call<Audio> call, Response<Audio> response) {
+                if (response.isSuccessful()) {
+                    List<AudioFilesItem> result = response.body().getAudioFiles();
+                    audioAdapter.setData(result);
+                }
+            }
+            @Override
+            public void onFailure(Call<Audio> call, Throwable t) {
+            }
+        });
+    }
     private void getDataFromApi (){
         ApiService.endpoint().getSurah().enqueue(new Callback<Chapters>() {
             @Override
             public void onResponse(Call<Chapters> call, Response<Chapters> response) {
                 if (response.isSuccessful()){
                     List<ChaptersItem> result = response.body().getChapters();
-                    Log.d(TAG, result.toString());
+                    Log.d(TAG,result.toString());
                     mainAdapter.setData(result);
                 }
             }
