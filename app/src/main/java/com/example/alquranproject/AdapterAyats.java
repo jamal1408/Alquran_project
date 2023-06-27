@@ -9,15 +9,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.alquranproject.Models.AyatModel.VersesItem;
-import com.example.alquranproject.Models.AyatModel.VersesItem;
+import com.example.alquranproject.Models.Terjemahan.TranslationsItem;
 
 import java.util.List;
 
 public class AdapterAyats extends RecyclerView.Adapter<AdapterAyats.AyatViewHolder> {
     private List<VersesItem> results;
 
-    public AdapterAyats(List<VersesItem> results) {
+    private List<TranslationsItem> translationsItems;
+
+    public AdapterAyats(List<VersesItem> results , List<TranslationsItem> translationsItems){
+
         this.results = results;
+        this.translationsItems = translationsItems;
     }
 
     @NonNull
@@ -30,9 +34,10 @@ public class AdapterAyats extends RecyclerView.Adapter<AdapterAyats.AyatViewHold
 
     @Override
     public void onBindViewHolder(@NonNull AyatViewHolder holder, int position) {
+        TranslationsItem translationsItem = translationsItems.get(position);
         VersesItem result = results.get(position);
-
         holder.textViewAyat.setText(result.getTextUthmani());
+        holder.TerjemahanAyat.setText(translationsItem.getText());
 
     }
 
@@ -43,15 +48,20 @@ public class AdapterAyats extends RecyclerView.Adapter<AdapterAyats.AyatViewHold
 
     public class AyatViewHolder extends RecyclerView.ViewHolder {
         TextView textViewAyat;
+        TextView TerjemahanAyat;
         public AyatViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewAyat = itemView.findViewById(R.id.tvAyat);
+            TerjemahanAyat = itemView.findViewById(R.id.tvTerjemahanAyat);
         }
     }
 
-    public void setData(List<VersesItem> data){
+    public void setData(List<TranslationsItem> ti, List<VersesItem> result){
+        translationsItems.clear();
+        translationsItems.addAll(ti);
+
         results.clear();
-        results.addAll(data);
+        results.addAll(result);
         notifyDataSetChanged();
     }
 

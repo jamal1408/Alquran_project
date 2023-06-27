@@ -42,6 +42,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                 Intent intent = new Intent(holder.itemView.getContext(), DetailSurahActivity.class);
 
                 intent.putExtra("id", result.getId());
+                intent.putExtra( "name_complex", result.getNameComplex());
+                intent.putExtra( "revelation_place", result.getRevelationPlace());
+                intent.putExtra( "name_arabic", result.getNameArabic());
+
                 holder.itemView.getContext().startActivity(intent);
             }
         });
